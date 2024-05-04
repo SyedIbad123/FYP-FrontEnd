@@ -1,0 +1,13 @@
+{
+	"images": [
+		{
+			"link": "https://www.example.com/image1.jpg",
+			"filename": "image1.jpg"
+		},
+		{
+			"link": "https://www.example.com/image2.png",
+			"filename": "image2.png"
+		},
+		{ "link": "https://www.example.com/image3.jpg", "filename": "image3.jpg" }
+	]
+}

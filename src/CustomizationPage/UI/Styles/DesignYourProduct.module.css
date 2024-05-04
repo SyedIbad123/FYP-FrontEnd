@@ -1,0 +1,38 @@
+.heading {
+	font-size: 2rem;
+	margin-left: 2%;
+}
+
+.para {
+	font-size: large;
+	color: red;
+	margin-left: 2%;
+}
+
+.addImg {
+	padding: 1rem 4rem;
+	margin: 1rem 1.5rem;
+	background-color: #fff;
+	border: 1px solid grey;
+	border-radius: 50px;
+	outline: none;
+	cursor: pointer;
+	transition: background-color 0.6s ease, color 0.6s ease;
+}
+
+.addTxt {
+	padding: 1rem 4rem;
+	margin: 1rem 2rem;
+	background-color: #fff;
+	border: 1px solid grey;
+	border-radius: 50px;
+	outline: none;
+	cursor: pointer;
+	transition: background-color 0.6s ease, color 0.6s ease;
+}
+
+.addImg:hover,
+.addTxt:hover {
+	background-color: black;
+	color: white;
+}

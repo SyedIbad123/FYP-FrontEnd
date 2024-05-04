@@ -1,0 +1,9 @@
+.selectproduct {
+	/* background-color: black; */
+	color: rgb(0, 0, 0);
+	/* margin-top: -15rem; */
+	top: 20%;
+	left: 60%;
+	position: absolute;
+	z-index: 9;
+}
