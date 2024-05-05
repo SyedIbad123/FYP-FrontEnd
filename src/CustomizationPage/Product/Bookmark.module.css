@@ -9,31 +9,27 @@
 }
 
 .image {
-	height: 108vh;
-	width: 64vh;
+	height: 60vh;
+	width: 50vh;
 	position: relative;
 	/* top: 100%; */
-	/* margin-top: 2rem; */
-	left: 20%;
-	top: "-40%";
+	margin-top: 10rem;
+	left: 40%;
 }
-
 .frame {
-	height: 25vh;
-	width: 12vw;
+	height: 38vh;
+	width: 5.2vw;
 	/* background-color: black; */
 	border: 2px dashed red;
-	border-radius: 50%;
 	position: absolute;
-	top: 57%;
-	left: 42%;
+	top: 30%;
+	left: 48%;
 	overflow: hidden;
 }
 
 .noBorder {
 	border: none;
 }
-
 .btnSect {
 	display: flex;
 	justify-content: center;

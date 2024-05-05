@@ -15,21 +15,21 @@ const StylePage = () => {
 		// };
 
 		// fetchImages();
-		console.log("USE EFFECT =====")
-		const url = 'http://localhost:8000/api/v2/image/get-all-images';
+		console.log("USE EFFECT =====");
+		const url = "http://localhost:8000/api/v2/image/get-all-images";
 		// Making the GET request using Axios
-		axios.get(url)
-		.then(response => {
-			console.log('Response: IMAGES', response.data);
-			setImages(response?.data?.images)
-			// Handle response data
-		})
-		.catch(error => {
-			console.error('Error:', error);
-			// Handle error
-		});
+		axios
+			.get(url)
+			.then((response) => {
+				console.log("Response: IMAGES", response.data);
+				setImages(response?.data?.images);
+				// Handle response data
+			})
+			.catch((error) => {
+				console.error("Error:", error);
+				// Handle error
+			});
 	}, []);
-	
 
 	console.log(images);
 

@@ -9,24 +9,22 @@
 }
 
 .image {
-	height: 108vh;
-	width: 64vh;
-	position: relative;
+	height: 50vh;
+	width: 70vh;
+	position: relative; 
 	/* top: 100%; */
-	/* margin-top: 2rem; */
+	margin-top: 15rem;
 	left: 20%;
-	top: "-40%";
 }
 
 .frame {
-	height: 25vh;
-	width: 12vw;
+	height: 26vh;
+	width: 16.3vw;
 	/* background-color: black; */
 	border: 2px dashed red;
-	border-radius: 50%;
 	position: absolute;
-	top: 57%;
-	left: 42%;
+	top: 44%;
+	left: 38%;
 	overflow: hidden;
 }
 
@@ -41,7 +39,7 @@
 	background-color: white;
 	width: 70%;
 	margin-left: 6rem;
-	margin-top: 0rem;
+	margin-top: 2rem;
 	margin-bottom: 2rem;
 	border-radius: 50px;
 	/* position: absolute; */
@@ -65,14 +63,14 @@
 
 .fontDropdown {
 	position: absolute;
-	top: 88%;
+	top: 80%;
 	left: 10%;
 	margin: 2rem;
 }
 
 .previewBtn {
 	position: absolute;
-	top: 100%;
+	top: 93%;
 	left: 34%;
 	background-color: rgb(255, 255, 255);
 	color: rgb(3, 3, 3);
@@ -92,7 +90,7 @@
 
 .designBtn {
 	position: absolute;
-	top: 100%;
+	top: 93%;
 	left: 60%;
 	background-color: rgb(255, 255, 255);
 	color: rgb(3, 3, 3);
@@ -112,7 +110,7 @@
 
 .saveBtn {
 	position: absolute;
-	top: 120%;
+	top: 105%;
 	left: 40%;
 	background-color: rgb(2, 2, 2);
 	color: rgb(190, 190, 190);

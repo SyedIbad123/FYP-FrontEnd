@@ -17,7 +17,7 @@ function ProductColorGoldenBookmark({ onColorChange }) {
 			<div
 				className={styles.colorPallete}
 				style={{
-					margin: "18rem 0 10rem 1.2rem",
+					margin: "20rem 0 10rem 1.2rem",
 					top: "100%",
 				}}>
 				<div>

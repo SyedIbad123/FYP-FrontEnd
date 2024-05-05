@@ -17,7 +17,7 @@ function ProductColorGolden({ onColorChange }) {
 			<div
 				className={styles.colorPallete}
 				style={{
-					margin: "19rem 0 0 1.2rem",
+					margin: "21rem 0 0 1.2rem",
 					top: "67%",
 				}}>
 				<div>

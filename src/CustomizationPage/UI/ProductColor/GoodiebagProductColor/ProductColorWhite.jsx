@@ -21,31 +21,93 @@ function ProductColorWhitie({ onColorChange }) {
 					top: "67%",
 				}}>
 				<div>
-					<button onClick={() => onColorChange("white")}></button>
+					<button onClick={() => onColorChange("whitewhite")}></button>
+				</div>
+
+				<div>
+					<button onClick={() => onColorChange("whitered")}></button>
 				</div>
 				<div>
-					<button onClick={() => onColorChange("black")}></button>
+					<button onClick={() => onColorChange("whitegreen")}></button>
 				</div>
 				<div>
-					<button onClick={() => onColorChange("red")}></button>
+					<button onClick={() => onColorChange("whitebrown")}></button>
 				</div>
 				<div>
-					<button onClick={() => onColorChange("green")}></button>
+					<button onClick={() => onColorChange("whitepurple")}></button>
 				</div>
 				<div>
-					<button onClick={() => onColorChange("brown")}></button>
+					<button onClick={() => onColorChange("whitepink")}></button>
 				</div>
 				<div>
-					<button onClick={() => onColorChange("purple")}></button>
+					<button
+						style={{
+							backgroundColor: "lightgreen",
+							border: "lightgreen",
+							borderRadius: "50%",
+							display: "inline-block",
+							width: " 30px",
+							height: " 30px",
+							margin: "5px",
+							cursor: "pointer",
+						}}
+						onClick={() => onColorChange("whitelightgreen")}></button>
 				</div>
 				<div>
-					<button onClick={() => onColorChange("pink")}></button>
+					<button
+						style={{
+							backgroundColor: "lightblue",
+							border: "lightblue",
+							borderRadius: "50%",
+							display: "inline-block",
+							width: " 30px",
+							height: " 30px",
+							margin: "5px",
+							cursor: "pointer",
+						}}
+						onClick={() => onColorChange("whitelightblue")}></button>
 				</div>
 				<div>
-					<button onClick={() => onColorChange("grey")}></button>
+					<button
+						style={{
+							backgroundColor: "blue",
+							border: "blue",
+							borderRadius: "50%",
+							display: "inline-block",
+							width: " 30px",
+							height: " 30px",
+							margin: "5px",
+							cursor: "pointer",
+						}}
+						onClick={() => onColorChange("whiteblue")}></button>
 				</div>
 				<div>
-					<button onClick={() => onColorChange("seagreen")}></button>
+					<button
+						style={{
+							backgroundColor: "yellow",
+							border: "yellow",
+							borderRadius: "50%",
+							display: "inline-block",
+							width: " 30px",
+							height: " 30px",
+							margin: "5px",
+							cursor: "pointer",
+						}}
+						onClick={() => onColorChange("whiteyellow")}></button>
+				</div>
+				<div>
+					<button
+						style={{
+							backgroundColor: "black",
+							border: "blac",
+							borderRadius: "50%",
+							display: "inline-block",
+							width: " 30px",
+							height: " 30px",
+							margin: "5px",
+							cursor: "pointer",
+						}}
+						onClick={() => onColorChange("whiteblack")}></button>
 				</div>
 
 				{/* Add more buttons for other colors */}

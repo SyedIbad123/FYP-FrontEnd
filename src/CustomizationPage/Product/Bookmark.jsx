@@ -1,20 +1,23 @@
-import styles from "./Product.module.css";
+import styles from "./Bookmark.module.css";
 import { fabric } from "fabric";
 import { useEffect, useRef, useState } from "react";
 import { SketchPicker } from "react-color";
 import html2canvas from "html2canvas";
+import axios from "axios";
+import Button from "@mui/material/Button";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
 
 const Bookmark = ({
 	selectedColor = "white",
-	selectedBlackcolor,
-	selectedGoldencolor = "golden",
 	selectedImage,
 	textAdded,
 	handleAddText,
 	imageUpdateTrigger,
 	textUpdateTrigger,
-	setSelectedBlackcolor,
-	setSelectedGoldencolor,
 }) => {
 	const canvasRef = useRef(null);
 	// const canvasRef2 = useRef(null);
@@ -40,6 +43,17 @@ const Bookmark = ({
 		"Helvetica",
 		"Courier New",
 		"Verdana",
+		"Georgia",
+		"Palatino Linotype",
+		"Garamond",
+		"Baskerville",
+		"Tahoma",
+		"Calibri",
+		"Lucida Sans",
+		"Trebuchet MS",
+		"Consolas",
+		"Courier",
+		"Lucida Console",
 	];
 
 	// if (selectedBlackcolor === "black") {
@@ -319,8 +333,11 @@ const Bookmark = ({
 		setShowFontDropdown(false); // Close the dropdown
 	};
 
+	const [preview, setPreview] = useState(false);
+
 	const handlePreviewClick = () => {
 		setEditMode(false);
+		setPreview(true);
 
 		// Disable interaction with ALL objects
 		canvas.forEachObject((obj) => {
@@ -335,6 +352,7 @@ const Bookmark = ({
 
 	const handleDesignClick = () => {
 		setEditMode(true);
+		setPreview(false);
 
 		// Enable interaction with ALL objects
 		canvas.forEachObject((obj) => {
@@ -347,19 +365,36 @@ const Bookmark = ({
 		canvas.renderAll();
 	};
 
-	const downloadImage = () => {
-		const link = document.createElement("a");
-		link.download = "image.png";
-		link.href = canvas.toDataURL({
-			format: "png",
-			quality: 1,
-		});
-		link.click();
-	};
+	// const downloadImage = () => {
+	// 	const link = document.createElement("a");
+	// 	link.download = "image.png";
+	// 	link.href = canvas.toDataURL({
+	// 		format: "png",
+	// 		quality: 1,
+	// 	});
+	// 	link.click();
+	// };
 
-	const handleProductSelect = (product) => {
-		setSelectedProduct(product);
-	};
+	// const handleProductSelect = (product) => {
+	// 	setSelectedProduct(product);
+	// };
+
+	async function saveImageToMongoDb(imageLink) {
+		let url = "http://localhost:8000/api/v2/image/upload-image";
+		let data = {
+			image: imageLink,
+		};
+		axios
+			.post(url, { image: imageLink })
+			.then((response) => {
+				console.log("Response:", response.data);
+				// Handle response
+			})
+			.catch((error) => {
+				console.error("Error:", error);
+				// Handle error
+			});
+	}
 
 	const handleSave = async () => {
 		const node = frameRef.current;
@@ -371,9 +406,10 @@ const Bookmark = ({
 			// Choose ONE of the following actions (A, B, or C):
 
 			// A. Store to Database ('db.json')
-			await saveImageLinkToJson("db.json", imageLink, "customized_image.png");
+			// await saveImageLinkToJson("db.json", imageLink, "customized_image.png");
 			console.log("image link : ", imageLink);
 
+			// saveImageToMongoDb(imageLink); // this function saves image in db
 			// B. Display the Image
 			displayImage(imageLink);
 
@@ -386,44 +422,67 @@ const Bookmark = ({
 		}
 	};
 
-	async function saveImageLinkToJson(filename, dataUrl, imageName) {
-		try {
-			const existingData = await fetch(filename).then((response) => {
-				if (!response.ok) {
-					throw new Error(`Error fetching ${filename}: ${response.statusText}`);
-				}
-				return response.json();
-			});
-			console.log("Existing Data before push : ", existingData);
+	// async function saveImageLinkToJson(filename, dataUrl, imageName) {
+	// 	try {
+	// 		const existingData = await fetch(filename).then((response) => {
+	// 			if (!response.ok) {
+	// 				throw new Error(`Error fetching ${filename}: ${response.statusText}`);
+	// 			}
+	// 			return response.json();
+	// 		});
+	// 		console.log("Existing Data before push : ", existingData);
 
-			const newImageEntry = { link: dataUrl, filename: imageName };
-			existingData.images.push(newImageEntry);
+	// 		const newImageEntry = { link: dataUrl, filename: imageName };
+	// 		existingData.images.push(newImageEntry);
 
-			console.log("Existing Data after push : ", existingData);
-			console.log("New image entry : ", newImageEntry);
-			console.log("Stringify existing data : ", JSON.stringify(existingData));
+	// 		console.log("Existing Data after push : ", existingData);
+	// 		console.log("New image entry : ", newImageEntry);
+	// 		console.log("Stringify existing data : ", JSON.stringify(existingData));
 
-			await axios
-				.put(`/images`, existingData) // Update with your server URL
-				.then((response) => {
-					if (response.status === 200) {
-						console.log("Image link saved to db.json successfully!");
-					} else {
-						console.error("Error saving to db.json:", response.statusText);
-					}
-					console.log("Response data : ", response.data);
-					return response.data;
-				});
-		} catch (error) {
-			console.error("Error interacting with db.json:", error);
-		}
-	}
+	// 		await axios
+	// 			.put(`/images`, existingData) // Update with your server URL
+	// 			.then((response) => {
+	// 				if (response.status === 200) {
+	// 					console.log("Image link saved to db.json successfully!");
+	// 				} else {
+	// 					console.error("Error saving to db.json:", response.statusText);
+	// 				}
+	// 				console.log("Response data : ", response.data);
+	// 				return response.data;
+	// 			});
+	// 	} catch (error) {
+	// 		console.error("Error interacting with db.json:", error);
+	// 	}
+	// }
+
+	const [showImage, setShowImage] = useState(false);
 
 	function displayImage(imageLink) {
+		setShowImage(true);
+		setPreview(false);
+		const sectionElement = document.getElementById("sectionproduct");
+		console.log("section Element ===> ", sectionElement);
 		const imgElement = document.createElement("img");
+		imgElement.style.width = "30vw";
+		imgElement.style.height = "70vh";
+		console.log("img Element ===> ", imgElement);
 		imgElement.src = imageLink;
 		imgElement.alt = "Generated Image";
-		document.body.appendChild(imgElement);
+		sectionElement.appendChild(imgElement);
+	}
+
+	const [open, setOpen] = useState(false);
+
+	const handleClickOpen = () => {
+		setOpen(true);
+	};
+
+	const handleClose = () => {
+		setOpen(false);
+	};
+
+	function refresh() {
+		window.location.reload();
 	}
 
 	return (
@@ -458,13 +517,22 @@ const Bookmark = ({
 						{/* </canvas> */}
 					</div>
 				</section>
-
 				{isTextSelected && editMode && (
 					<section className={styles.btnSect}>
-						<button onClick={handleFontFamilyClick}>Font</button>
+						<button onClick={handleFontFamilyClick}>
+							<img
+								style={{ width: "25px", height: "25px" }}
+								src="https://cdn-icons-png.flaticon.com/512/167/167502.png"
+								alt=""
+							/>
+						</button>
 						{showFontDropdown && (
 							<div className={styles.fontDropdown}>
 								<select
+									style={{
+										padding: "0.2rem",
+										borderRadius: "20px",
+									}}
 									value={selectedFont}
 									onChange={(e) => handleFontChange(e.target.value)}>
 									{fontFamilies.map((font) => (
@@ -473,34 +541,207 @@ const Bookmark = ({
 										</option>
 									))}
 								</select>
-								<button onClick={applyFont}>Apply</button>
+								<button
+									style={{
+										marginLeft: "1rem",
+									}}
+									onClick={applyFont}>
+									Apply
+								</button>
 							</div>
 						)}
-						<button onClick={handleColorClick}>color</button>
+						<button onClick={handleColorClick}>
+							<img
+								style={{ width: "25px", height: "25px" }}
+								src="https://cdn-icons-png.flaticon.com/512/11460/11460836.png"
+								alt=""
+							/>
+						</button>
 						{displayColorPicker ? (
-							<div style={{ position: "absolute" }}>
+							<div
+								style={{
+									position: "absolute",
+									top: "53%",
+									left: "40%",
+									zIndex: 99,
+								}}>
 								<SketchPicker color={color} onChange={handleColorChange} />
 								<button onClick={closeColorPicker}>Apply</button>
 							</div>
 						) : null}
-						<button onClick={handleBoldClick}>Bold</button>
-						<button onClick={handleItalicClick}>Italic</button>
-						<button onClick={handleUnderlineClick}>Underline</button>
+						<button onClick={handleBoldClick}>
+							<img
+								style={{ width: "25px", height: "25px" }}
+								src="https://cdn-icons-png.flaticon.com/512/114/114304.png"
+								alt=""
+							/>
+						</button>
+						<button onClick={handleItalicClick}>
+							<img
+								style={{ width: "25px", height: "25px" }}
+								src="https://cdn-icons-png.flaticon.com/512/14253/14253712.png"
+								alt=""
+							/>
+						</button>
+						<button onClick={handleUnderlineClick}>
+							<img
+								style={{ width: "25px", height: "25px" }}
+								src="https://cdn-icons-png.flaticon.com/512/25/25433.png"
+								alt=""
+							/>
+						</button>
 					</section>
 				)}
 
-				<section>
-					<button className={styles.previewBtn} onClick={handlePreviewClick}>
+				<section
+					style={
+						{
+							// marginTop: "3rem",
+							// top: "10%",
+							// position: "absolute",
+							// top: "80%",
+							// left: "50%",
+						}
+					}>
+					<button
+						// style={{
+						// 	marginTop: "3rem",
+						// 	top: "10%",
+						// }}
+						className={styles.previewBtn}
+						onClick={handlePreviewClick}>
 						Preview
 					</button>
 					<button className={styles.designBtn} onClick={handleDesignClick}>
 						Design
 					</button>
-					<button className={styles.saveBtn} onClick={handleSave}>
-						Save Image
-					</button>
+
+					{preview && (
+						<>
+							<Button
+								sx={{
+									position: "absolute",
+									top: "110%",
+									left: "38%",
+									backgroundColor: "rgb(2, 2, 2)",
+									color: "rgb(190, 190, 190)",
+									border: "none",
+									outline: "none",
+									borderRadius: "50px",
+									padding: "0.5rem 5rem",
+									cursor: "pointer",
+									transition:
+										"transform 0.3s ease-in-out, background-color 0.4s ease-in-out, color 0.3s ease-in-out",
+									"&:hover": {
+										transform: "scale(1.1)",
+										backgroundColor: "rgb(250, 4, 4)",
+										color: "rgb(250, 250, 250)",
+										border: "none",
+									},
+									"&:hover span": {
+										transition: "font-size 0.3s ease-in-out",
+										fontSize: "1.1em",
+									},
+								}}
+								variant="outlined"
+								onClick={handleClickOpen}>
+								Continue
+							</Button>
+							<Dialog
+								open={open}
+								onClose={handleClose}
+								aria-labelledby="alert-dialog-title"
+								aria-describedby="alert-dialog-description">
+								<DialogTitle id="alert-dialog-title">
+									{"Confirm your design"}
+								</DialogTitle>
+								<DialogContent>
+									<DialogContentText id="alert-dialog-description">
+										Are you want to sure to continue ?
+									</DialogContentText>
+								</DialogContent>
+								<DialogActions>
+									<Button
+										onClick={() => {
+											handleClose(), handleSave();
+										}}>
+										Ok
+									</Button>
+									<Button onClick={handleClose} autoFocus>
+										cancel
+									</Button>
+								</DialogActions>
+							</Dialog>
+						</>
+					)}
+					{showImage && (
+						<>
+							<Button
+								sx={{
+									position: "absolute",
+									top: "110%",
+									left: "38%",
+									backgroundColor: "rgb(2, 2, 2)",
+									color: "rgb(190, 190, 190)",
+									border: "none",
+									outline: "none",
+									borderRadius: "50px",
+									padding: "0.5rem 5rem",
+									cursor: "pointer",
+									transition:
+										"transform 0.3s ease-in-out, background-color 0.4s ease-in-out, color 0.3s ease-in-out",
+									"&:hover": {
+										transform: "scale(1.1)",
+										backgroundColor: "rgb(250, 4, 4)",
+										color: "rgb(250, 250, 250)",
+										border: "none",
+									},
+									"&:hover span": {
+										transition: "font-size 0.3s ease-in-out",
+										fontSize: "1.1em",
+									},
+								}}
+								variant="outlined"
+								onClick={handleClickOpen}>
+								Confirm
+							</Button>
+							<Dialog
+								open={open}
+								onClose={handleClose}
+								aria-labelledby="alert-dialog-title"
+								aria-describedby="alert-dialog-description">
+								<DialogTitle id="alert-dialog-title">
+									{"Confirm your design"}
+								</DialogTitle>
+								<DialogContent>
+									<DialogContentText id="alert-dialog-description">
+										Are you want to sure to continue ?
+									</DialogContentText>
+								</DialogContent>
+								<DialogActions>
+									<Button
+										onClick={() => {
+											handleClose(), saveImageToMongoDb(), refresh();
+										}}>
+										Ok
+									</Button>
+									<Button onClick={handleClose} autoFocus>
+										cancel
+									</Button>
+								</DialogActions>
+							</Dialog>
+						</>
+					)}
 				</section>
 			</section>
+			<section
+				style={{
+					height: "10vh",
+					width: "20vw",
+					// backgroundColor: "black",
+					position: "relative",
+				}}
+				id="sectionproduct"></section>
 		</>
 	);
 };
