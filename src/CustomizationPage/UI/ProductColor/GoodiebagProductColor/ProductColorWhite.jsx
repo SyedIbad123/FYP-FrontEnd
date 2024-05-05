@@ -1,21 +1,25 @@
-// ProductColor.js
-import styles from "./Styles/ProductColor.module.css";
+import styles from "../../Styles/ProductColor.module.css";
 
-const ProductColor = ({ onColorChange }) => {
+function ProductColorWhitie({ onColorChange }) {
 	return (
 		<>
 			<div
 				style={{
-					marginTop: "3rem",
+					marginTop: "12rem",
 					left: "1%",
 					position: "absolute",
 				}}>
-				<h3 className={styles.heading}>Choose Product Colors</h3>
+				<h3 className={styles.heading}>Choose Product Color</h3>
 				<p className={styles.para}>
-					Select up to 5 backgrounds for your product
+					With <strong>White</strong> strip.
 				</p>
 			</div>
-			<div className={styles.colorPallete}>
+			<div
+				className={styles.colorPallete}
+				style={{
+					margin: "18rem 0 0 1.2rem",
+					top: "67%",
+				}}>
 				<div>
 					<button onClick={() => onColorChange("white")}></button>
 				</div>
@@ -48,6 +52,6 @@ const ProductColor = ({ onColorChange }) => {
 			</div>
 		</>
 	);
-};
+}
 
-export default ProductColor;
+export default ProductColorWhitie;

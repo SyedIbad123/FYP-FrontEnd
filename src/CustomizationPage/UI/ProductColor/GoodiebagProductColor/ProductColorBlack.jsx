@@ -1,18 +1,17 @@
-// ProductColor.js
-import styles from "./Styles/ProductColor.module.css";
+import styles from "../../Styles/ProductColor.module.css";
 
-const ProductColor = ({ onColorChange }) => {
+function ProductColorBlack({ onColorChange }) {
 	return (
 		<>
 			<div
 				style={{
-					marginTop: "3rem",
+					marginTop: "-1rem",
 					left: "1%",
 					position: "absolute",
 				}}>
-				<h3 className={styles.heading}>Choose Product Colors</h3>
+				<h3 className={styles.heading}>Choose Product Color</h3>
 				<p className={styles.para}>
-					Select up to 5 backgrounds for your product
+					With <strong>Black</strong> Strip.
 				</p>
 			</div>
 			<div className={styles.colorPallete}>
@@ -48,6 +47,6 @@ const ProductColor = ({ onColorChange }) => {
 			</div>
 		</>
 	);
-};
+}
 
-export default ProductColor;
+export default ProductColorBlack;

@@ -1,4 +1,4 @@
-import styles from "./Product.module.css";
+import styles from "./Keychain.module.css";
 import { fabric } from "fabric";
 import { useEffect, useRef, useState } from "react";
 import { SketchPicker } from "react-color";
@@ -10,7 +10,6 @@ const Keychain = ({
 	selectedColor = "white",
 	selectedImage,
 	textAdded,
-	handleAddText,
 	imageUpdateTrigger,
 	textUpdateTrigger,
 }) => {
@@ -40,11 +39,44 @@ const Keychain = ({
 
 	const getImageSource = (color) => {
 		if (color === "white") {
-			return "src/CustomizationPage/Product/images/keychain1.jpeg";
-		} else if (color === "brown") {
-			return "src/CustomizationPage/Product/images/keychain2.jpeg";
+			return "src\\CustomizationPage\\Product\\images\\KEY CHAIN\\SilverWhite.png";
 		} else if (color === "red") {
-			return "src/CustomizationPage/Product/images/keychain3.webp";
+			return "src\\CustomizationPage\\Product\\images\\KEY CHAIN\\SilverRed.png";
+		} else if (color === "green") {
+			return "src\\CustomizationPage\\Product\\images\\KEY CHAIN\\SilverGreen.png";
+		} else if (color === "brown") {
+			return "src\\CustomizationPage\\Product\\images\\KEY CHAIN\\SilverBrown.png";
+		} else if (color === "purple") {
+			return "src\\CustomizationPage\\Product\\images\\KEY CHAIN\\SilverPurple.png";
+		} else if (color === "pink") {
+			return "src\\CustomizationPage\\Product\\images\\KEY CHAIN\\SilverPink.png";
+		} else if (color === "maroon") {
+			return "src\\CustomizationPage\\Product\\images\\KEY CHAIN\\SilverMaroon.png";
+		} else if (color === "blue") {
+			return "src\\CustomizationPage\\Product\\images\\KEY CHAIN\\SilverBlue.png";
+		}
+
+		// golden white
+		else if (color === "goldenwhite") {
+			return "src\\CustomizationPage\\Product\\images\\KEY CHAIN\\GoldenWhite.png";
+		} else if (color === "goldenred") {
+			return "src\\CustomizationPage\\Product\\images\\KEY CHAIN\\GoldenRed.png";
+		} else if (color === "goldengreen") {
+			return "src\\CustomizationPage\\Product\\images\\KEY CHAIN\\GoldenGreen.png";
+		} else if (color === "goldenbrown") {
+			return "src\\CustomizationPage\\Product\\images\\KEY CHAIN\\GoldenBrown.png";
+		} else if (color === "goldenpurple") {
+			return "src\\CustomizationPage\\Product\\images\\KEY CHAIN\\GoldenPurple.png";
+		} else if (color === "goldenpink") {
+			return "src\\CustomizationPage\\Product\\images\\KEY CHAIN\\GoldenPink.png";
+		} else if (color === "golden") {
+			return "src\\CustomizationPage\\Product\\images\\KEY CHAIN\\GoldenGrey.png";
+		} else if (color === "goldenyellow") {
+			return "src\\CustomizationPage\\Product\\images\\KEY CHAIN\\GoldenYellow.png";
+		} else if (color === "goldenblack") {
+			return "src\\CustomizationPage\\Product\\images\\KEY CHAIN\\GoldenBlack.png";
+		} else {
+			return "src\\CustomizationPage\\Product\\images\\KEY CHAIN\\SilverWhite.png";
 		}
 	};
 

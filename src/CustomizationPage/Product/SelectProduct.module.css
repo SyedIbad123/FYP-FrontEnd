@@ -2,8 +2,27 @@
 	/* background-color: black; */
 	color: rgb(0, 0, 0);
 	/* margin-top: -15rem; */
-	top: 20%;
+	top: 15%;
 	left: 60%;
 	position: absolute;
+	text-align: center;
 	z-index: 9;
+}
+
+.btn {
+	background-color: black;
+	color: white;
+	/* border: 1px solid black; */
+	border: none;
+	outline: none;
+	margin: 1rem 1rem 3rem 0;
+	padding: 1rem;
+	border-radius: 50px;
+	cursor: pointer;
+	transition: background-color 0.3s ease;
+}
+
+.btn:hover {
+	background-color: white;
+	color: black;
 }

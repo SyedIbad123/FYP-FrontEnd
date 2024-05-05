@@ -1,10 +1,19 @@
 import React from "react";
 import DesignYourProduct from "./DesignYourProduct";
 import ProductColor from "./ProductColor";
-import Product from "../Product/Product";
-import { useState, useContext } from "react";
-// import { ProductContext } from "../Product/ProductContext/ProductContext";
-// import { useNavigate } from "react-router-dom";
+// import Product from "../Product/Product";
+import { useState } from "react";
+import SelectProduct from "../Product/SelectProduct.jsx";
+import Keychain from "../Product/Keychain.jsx";
+import GoodieBag from "../Product/GoodieBag.jsx";
+import Bookmarks from "../Product/Bookmark.jsx";
+import ProductColorSilver from "../UI/ProductColor/KeychainProductColor/ProductColorSilver.jsx";
+import ProductColorGolden from "../UI/ProductColor/KeychainProductColor/ProductColorGolden.jsx";
+import ProductColorBlack from "./ProductColor/GoodiebagProductColor/ProductColorBlack.jsx";
+import ProductColorWhitie from "./ProductColor/GoodiebagProductColor/ProductColorWhite.jsx";
+import ProductColorWhiteBookmark from "./ProductColor/BookmarkProductColor/ProductColorWhiteBookmark.jsx";
+import ProductColorBlackBookmark from "./ProductColor/BookmarkProductColor/ProductColorBlackBookmark.jsx";
+import ProductColorGoldenBookmark from "./ProductColor/BookmarkProductColor/ProductColorGoldenBookmark.jsx";
 
 const Designing = ({ props }) => {
 	const [selectedColor, setSelectedColor] = useState("white");
@@ -14,8 +23,8 @@ const Designing = ({ props }) => {
 	const [textUpdateTrigger, setTextUpdateTrigger] = useState(0);
 	const [selectedProduct, setSelectedProduct] = useState(null);
 
-	const handleProductSelect = (newProduct) => {
-		setSelectedProduct(newProduct);
+	const handleProductSelect = (product) => {
+		setSelectedProduct(product);
 	};
 
 	const handleImageSelect = (imageDataUrl) => {
@@ -51,10 +60,11 @@ const Designing = ({ props }) => {
 
 	return (
 		<section
-			style={{ 
+			style={{
 				display: "flex",
 				justifyContent: "space-between",
 				alignItems: "center",
+				// height: "120vh",
 			}}>
 			<section
 				style={{
@@ -89,52 +99,104 @@ const Designing = ({ props }) => {
 					style={{
 						position: "absolute",
 						width: "0.5px",
-						height: "115vh",
+						height: "165vh",
 						left: "45.9%",
-						top: "17%",
+						top: "13%",
 						backgroundColor: "black",
 					}}
 				/>
-				<ProductColor
+				{/* <ProductColor
 					selectedColor={selectedColor}
 					onColorChange={setSelectedColor}
-				/>
+				/> */}
+				{/* <ProductColor
+					selectedColor={selectedColor}
+					onColorChange={setSelectedColor}
+				/> */}
 
-				<hr
+				{/* <hr
 					style={{
 						margin: "50px 0",
 						width: "110%",
 					}}
-				/>
-
-				<button
-					// onClick={handleContinue}
-					style={{
-						position: "absolute",
-						left: "5%",
-						top: "117%",
-						padding: "15px 25px",
-						width: "30%",
-						backgroundColor: "blue",
-						color: "white",
-						border: "none",
-						borderRadius: "20px",
-						cursor: "pointer",
-					}}>
-					Continue
-				</button>
+				/> */}
 			</section>
 			<section>
-				<Product
-					selectedColor={selectedColor}
-					selectedImage={selectedImage}
-					textAdded={textAdded}
-					onAddText={handleAddText}
-					textUpdateTrigger={textUpdateTrigger}
-					imageUpdateTrigger={imageUpdateTrigger}
-					selectedProduct={selectedProduct}
-				/>
+				<div>
+					<SelectProduct onProductSelect={handleProductSelect} />
+				</div>
+				<div>
+					{selectedProduct === "keychain" && (
+						<>
+							<Keychain
+								selectedColor={selectedColor}
+								selectedImage={selectedImage}
+								textAdded={textAdded}
+								// handleAddText={onAddText}
+								textUpdateTrigger={textUpdateTrigger}
+								imageUpdateTrigger={imageUpdateTrigger}
+								selectedProduct={selectedProduct}
+							/>
+							<ProductColorSilver
+								selectedColor={selectedColor}
+								onColorChange={setSelectedColor}
+							/>
+							<ProductColorGolden
+								selectedColor={selectedColor}
+								onColorChange={setSelectedColor}
+							/>
+						</>
+					)}
+					{selectedProduct === "goodie bag" && (
+						<>
+							<GoodieBag
+								selectedColor={selectedColor}
+								selectedImage={selectedImage}
+								textAdded={textAdded}
+								// handleAddText={onAddText}
+								textUpdateTrigger={textUpdateTrigger}
+								imageUpdateTrigger={imageUpdateTrigger}
+								selectedProduct={selectedProduct}
+							/>
+							<ProductColorBlack
+								selectedColor={selectedColor}
+								onColorChange={setSelectedColor}
+							/>
+							<ProductColorWhitie
+								selectedColor={selectedColor}
+								onColorChange={setSelectedColor}
+							/>
+						</>
+					)}
+					{selectedProduct === "bookmarks" && (
+						<>
+							<Bookmarks
+								selectedColor={selectedColor}
+								selectedImage={selectedImage}
+								textAdded={textAdded}
+								// handleAddText={onAddText}
+								textUpdateTrigger={textUpdateTrigger}
+								imageUpdateTrigger={imageUpdateTrigger}
+								selectedProduct={selectedProduct}
+							/>
+							<ProductColorBlackBookmark
+								selectedColor={selectedColor}
+								onColorChange={setSelectedColor}
+							/>
+							<ProductColorWhiteBookmark
+								selectedColor={selectedColor}
+								onColorChange={setSelectedColor}
+							/>
+							<ProductColorGoldenBookmark
+								selectedColor={selectedColor}
+								onColorChange={setSelectedColor}
+							/>
+						</>
+					)}
+				</div>
 			</section>
+
+			<section></section>
 		</section>
 	);
 };

@@ -22,7 +22,7 @@ const GoodieBag = ({
 	const [showFontDropdown, setShowFontDropdown] = useState(false);
 	const [isTextSelected, setIsTextSelected] = useState(false);
 	const [editMode, setEditMode] = useState(true);
-	const [imageLoaded, setImageLoaded] = useState(false);
+	// const [imageLoaded, setImageLoaded] = useState(false);
 	const [selectedProduct, setSelectedProduct] = useState(null);
 
 	console.log("goodiebag component");

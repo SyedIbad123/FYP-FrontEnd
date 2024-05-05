@@ -2,14 +2,19 @@ import styles from "./Product.module.css";
 import { fabric } from "fabric";
 import { useEffect, useRef, useState } from "react";
 import { SketchPicker } from "react-color";
+import html2canvas from "html2canvas";
 
 const Bookmark = ({
-	selectedColor = "red",
+	selectedColor = "white",
+	selectedBlackcolor,
+	selectedGoldencolor = "golden",
 	selectedImage,
 	textAdded,
 	handleAddText,
 	imageUpdateTrigger,
 	textUpdateTrigger,
+	setSelectedBlackcolor,
+	setSelectedGoldencolor,
 }) => {
 	const canvasRef = useRef(null);
 	// const canvasRef2 = useRef(null);
@@ -19,6 +24,7 @@ const Bookmark = ({
 	const [selectedTextObject, setSelectedTextObject] = useState(false);
 	const [displayColorPicker, setDisplayColorPicker] = useState(false);
 	const [color, setColor] = useState("#000000");
+	const [tasselColor, setTasselColor] = useState("");
 	const [selectedFont, setSelectedFont] = useState("Arial");
 	const [showFontDropdown, setShowFontDropdown] = useState(false);
 	const [isTextSelected, setIsTextSelected] = useState(false);
@@ -36,17 +42,70 @@ const Bookmark = ({
 		"Verdana",
 	];
 
+	// if (selectedBlackcolor === "black") {
+	// 	setTasselColor(selectedBlackcolor);
+	// }
+
+	// if (selectedGoldencolor === "golden") {
+	// 	setTasselColor(selectedGoldencolor);
+	// }
+
 	const getImageSource = (color) => {
+		// Black Tassel
 		if (color === "white") {
-			return "src/CustomizationPage/Product/images/bookmark1.jpeg";
+			return "src\\CustomizationPage\\Product\\images\\BookMarks\\BlackTasselWhiteBookmark.png";
 		} else if (color === "brown") {
-			return "src/CustomizationPage/Product/images/bookmark2.jpeg";
+			return "src\\CustomizationPage\\Product\\images\\BookMarks\\BlackTasselBrownBookmark.png";
 		} else if (color === "red") {
-			return "src/CustomizationPage/Product/images/bookmark3.jpeg";
+			return "src\\CustomizationPage\\Product\\images\\BookMarks\\BlackTasselRedBookmark.png";
+		} else if (color === "green") {
+			return "src\\CustomizationPage\\Product\\images\\BookMarks\\BlackTasselGreenBookmark.png";
+		} else if (color === "purple") {
+			return "src\\CustomizationPage\\Product\\images\\BookMarks\\BlackTasselPurpleBookmark.png";
+		} else if (color === "pink") {
+			return "src\\CustomizationPage\\Product\\images\\BookMarks\\BlackTasselPinkBookmark.png";
+		} else if (color === "blue") {
+			return "src\\CustomizationPage\\Product\\images\\BookMarks\\BlackTasselBlueBookmark.png";
+		}
+
+		//  golden tassel
+		else if (color === "goldenwhite") {
+			return "src/CustomizationPage/Product/images/Bookmarks/GoldenTasselWhiteBookmark.png";
+		} else if (color === "goldenbrown") {
+			return "src\\CustomizationPage\\Product\\images\\BookMarks\\GoldenTasselBrownBookmark.png";
+		} else if (color === "goldenred") {
+			return "src\\CustomizationPage\\Product\\images\\BookMarks\\GoldenTasselRedBookmark.png";
+		} else if (color === "goldengreen") {
+			return "src\\CustomizationPage\\Product\\images\\BookMarks\\GoldenTasselGreenBookmark.png";
+		} else if (color === "goldenpurple") {
+			return "src\\CustomizationPage\\Product\\images\\BookMarks\\GoldenTasselPurpleBookmark.png";
+		} else if (color === "goldenyellow") {
+			return "src\\CustomizationPage\\Product\\images\\BookMarks\\GoldenTasselYellowBookmark.png";
+		} else if (color === "goldenblue") {
+			return "src\\CustomizationPage\\Product\\images\\BookMarks\\GoldenTasselBlueBookmark.png";
+		}
+
+		// white tassel
+		else if (color === "whitewhite") {
+			return "src\\CustomizationPage\\Product\\images\\BookMarks\\WhiteTasselWhiteBookmark.png";
+		} else if (color === "whitebrown") {
+			return "src\\CustomizationPage\\Product\\images\\BookMarks\\WhiteTasselBrownBookmark.png";
+		} else if (color === "whitered") {
+			return "src\\CustomizationPage\\Product\\images\\BookMarks\\WhiteTasselRedBookmark.png";
+		} else if (color === "whitegreen") {
+			return "src\\CustomizationPage\\Product\\images\\BookMarks\\WhiteTasselGreenBookmark.png";
+		} else if (color === "whitepurple") {
+			return "src\\CustomizationPage\\Product\\images\\BookMarks\\WhiteTasselPurpleBookmark.png";
+		} else if (color === "whitepink") {
+			return "src\\CustomizationPage\\Product\\images\\BookMarks\\WhiteTasselPinkBookmark.png";
+		} else if (color === "whiteyellow") {
+			return "src\\CustomizationPage\\Product\\images\\BookMarks\\WhiteTasselYellowBookmark.png";
+		} else {
+			return "src\\CustomizationPage\\Product\\images\\BookMarks\\WhiteTasselWhiteBookmark.png";
 		}
 	};
 
-	const imgSrc = getImageSource(selectedColor);
+	var imgSrc = getImageSource(selectedColor);
 
 	useEffect(() => {
 		const newCanvas = new fabric.Canvas(canvasRef.current);
@@ -171,7 +230,7 @@ const Bookmark = ({
 				borderColor: "black",
 				cornerColor: "black",
 
-				fill: "#000000",
+				fill: "white",
 				// controls: canvas.deleteControl,
 			});
 			canvas.add(textObject);
@@ -302,18 +361,99 @@ const Bookmark = ({
 		setSelectedProduct(product);
 	};
 
+	const handleSave = async () => {
+		const node = frameRef.current;
+
+		try {
+			const canvas = await html2canvas(node);
+			const imageLink = canvas.toDataURL("image/png");
+
+			// Choose ONE of the following actions (A, B, or C):
+
+			// A. Store to Database ('db.json')
+			await saveImageLinkToJson("db.json", imageLink, "customized_image.png");
+			console.log("image link : ", imageLink);
+
+			// B. Display the Image
+			displayImage(imageLink);
+
+			// C. Other Actions (e.g., upload to an image hosting service)
+			// ... Your code to handle the imageLink
+
+			console.log("Image generated and processed successfully!");
+		} catch (error) {
+			console.error("Error generating or handling image:", error);
+		}
+	};
+
+	async function saveImageLinkToJson(filename, dataUrl, imageName) {
+		try {
+			const existingData = await fetch(filename).then((response) => {
+				if (!response.ok) {
+					throw new Error(`Error fetching ${filename}: ${response.statusText}`);
+				}
+				return response.json();
+			});
+			console.log("Existing Data before push : ", existingData);
+
+			const newImageEntry = { link: dataUrl, filename: imageName };
+			existingData.images.push(newImageEntry);
+
+			console.log("Existing Data after push : ", existingData);
+			console.log("New image entry : ", newImageEntry);
+			console.log("Stringify existing data : ", JSON.stringify(existingData));
+
+			await axios
+				.put(`/images`, existingData) // Update with your server URL
+				.then((response) => {
+					if (response.status === 200) {
+						console.log("Image link saved to db.json successfully!");
+					} else {
+						console.error("Error saving to db.json:", response.statusText);
+					}
+					console.log("Response data : ", response.data);
+					return response.data;
+				});
+		} catch (error) {
+			console.error("Error interacting with db.json:", error);
+		}
+	}
+
+	function displayImage(imageLink) {
+		const imgElement = document.createElement("img");
+		imgElement.src = imageLink;
+		imgElement.alt = "Generated Image";
+		document.body.appendChild(imgElement);
+	}
+
 	return (
 		<>
 			<section className={styles.section}>
 				<section>
 					<div ref={frameRef}>
 						{/* <canvas ref={canvasRef2}> */}
-						<img className={styles.image} src={imgSrc} alt="bag" />
-						<div className={`${styles.frame} ${!editMode && styles.noBorder}`}>
+						<img
+							style={{
+								marginTop: "17rem",
+							}}
+							className={styles.image}
+							src={imgSrc}
+							alt="bookmark"
+						/>
+						<div
+							style={{
+								marginTop: "6rem",
+								// backgroundColor: "black",
+							}}
+							className={`${styles.frame} ${!editMode && styles.noBorder}`}>
 							<canvas
 								id="canvas"
 								ref={canvasRef}
-								className={styles.canvas1}></canvas>
+								// className={styles.canvas1}
+								style={{
+									// backgroundColor: "white",
+									height: "10vh",
+								}}></canvas>
 						</div>
 						{/* </canvas> */}
 					</div>
@@ -356,7 +496,9 @@ const Bookmark = ({
 					<button className={styles.designBtn} onClick={handleDesignClick}>
 						Design
 					</button>
-					<button className={styles.saveBtn}>Save Image</button>
+					<button className={styles.saveBtn} onClick={handleSave}>
+						Save Image
+					</button>
 				</section>
 			</section>
 		</>

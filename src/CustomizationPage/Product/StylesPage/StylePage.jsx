@@ -16,6 +16,8 @@ const StylePage = () => {
 	// 	fetchImages();
 	// }, []);
 
+	console.log(images);
+
 	return (
 		<div>
 			<h2>Your Cart</h2>
