@@ -339,6 +339,22 @@ const Keychain = ({
 	// 	setSelectedProduct(product);
 	// };
 
+	async function saveImageToMongoDb(imageLink){
+		let url = 'http://localhost:8000/api/v2/image/upload-image';
+		let data = {
+			image:imageLink
+		}
+		axios.post(url, {image:imageLink})
+			.then(response => {
+				console.log('Response:', response.data);
+				// Handle response
+			})
+			.catch(error => {
+				console.error('Error:', error);
+				// Handle error
+			});
+	}
+
 	const handleSave = async () => {
 		const node = frameRef.current;
 
@@ -352,6 +368,7 @@ const Keychain = ({
 			await saveImageLinkToJson("db.json", imageLink, "customized_image.png");
 			console.log("image link : ", imageLink);
 
+			saveImageToMongoDb(imageLink); // this function saves image in db
 			// B. Display the Image
 			displayImage(imageLink);
 
