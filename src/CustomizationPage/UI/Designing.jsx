@@ -101,7 +101,7 @@ const Designing = ({ props }) => {
 						width: "0.5px",
 						height: "155vh",
 						left: "45.9%",
-						top: "13%",
+						top: "2%",
 						backgroundColor: "black",
 					}}
 				/>

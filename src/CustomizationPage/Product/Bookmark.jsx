@@ -379,39 +379,51 @@ const Bookmark = ({
 	// 	setSelectedProduct(product);
 	// };
 
-	async function saveImageToMongoDb(imageLink) {
-		let url = "http://localhost:8000/api/v2/image/upload-image";
-		let data = {
-			image: imageLink,
-		};
-		axios
-			.post(url, { image: imageLink })
-			.then((response) => {
-				console.log("Response:", response.data);
-				// Handle response
-			})
-			.catch((error) => {
-				console.error("Error:", error);
-				// Handle error
-			});
-	}
+	// async function saveImageToMongoDb(imageLink) {
+	// 	let url = "http://localhost:8000/api/v2/image/upload-image";
+	// 	let data = {
+	// 		image: imageLink,
+	// 	};
+
+	// 	// try {
+	// 	// 	const res = await axios.post(url, data);
+	// 	// 	return res.data;
+	// 	// } catch (e) {
+	// 	// 	console.error("Error Message", e.message);
+	// 	// }
+
+	// 	axios
+	// 		.post(url, { image: imageLink })
+	// 		.then((response) => {
+	// 			// console.log("Response:", response.data);
+	// 			// console.log("image link === > ", imageLink);
+	// 			console.log("image  === > ", data.image);
+	// 			// Handle response
+	// 		})
+	// 		.catch((error) => {
+	// 			console.error("Error:", error);
+	// 			// Handle error
+	// 		});
+	// }
+
+	let url = "http://localhost:8000/api/v2/image";
 
 	const handleSave = async () => {
-		const node = frameRef.current;
+		// const node = frameRef.current;
 
 		try {
-			const canvas = await html2canvas(node);
-			const imageLink = canvas.toDataURL("image/png");
+			// const canvas = await html2canvas(node);
+			// const imageLink = canvas.toDataURL("image/png");
 
 			// Choose ONE of the following actions (A, B, or C):
 
 			// A. Store to Database ('db.json')
 			// await saveImageLinkToJson("db.json", imageLink, "customized_image.png");
-			console.log("image link : ", imageLink);
+			// console.log("image link : ", imageLink);
 
 			// saveImageToMongoDb(imageLink); // this function saves image in db
 			// B. Display the Image
-			displayImage(imageLink);
+			// displayImage(imageLink);
 
 			// C. Other Actions (e.g., upload to an image hosting service)
 			// ... Your code to handle the imageLink
@@ -421,6 +433,23 @@ const Bookmark = ({
 			console.error("Error generating or handling image:", error);
 		}
 	};
+
+	async function saveImageToMongoDb() {
+		const node = frameRef.current;
+
+		try {
+			const canvas = await html2canvas(node);
+			const imageLink = canvas.toDataURL("image/png");
+			displayImage(imageLink);
+			await axios.post(`${url}/upload-image`, {
+				imageUrl: imageLink,
+			});
+		} catch (e) {
+			console.log(e);
+		}
+
+		console.log("Image saved to MongoDB successfully!");
+	}
 
 	// async function saveImageLinkToJson(filename, dataUrl, imageName) {
 	// 	try {
@@ -460,14 +489,19 @@ const Bookmark = ({
 	function displayImage(imageLink) {
 		setShowImage(true);
 		setPreview(false);
+
 		const sectionElement = document.getElementById("sectionproduct");
 		console.log("section Element ===> ", sectionElement);
+
 		const imgElement = document.createElement("img");
+
 		imgElement.style.width = "30vw";
 		imgElement.style.height = "70vh";
 		console.log("img Element ===> ", imgElement);
+
 		imgElement.src = imageLink;
 		imgElement.alt = "Generated Image";
+
 		sectionElement.appendChild(imgElement);
 	}
 
@@ -663,7 +697,7 @@ const Bookmark = ({
 								<DialogActions>
 									<Button
 										onClick={() => {
-											handleClose(), handleSave();
+											handleClose(), saveImageToMongoDb();
 										}}>
 										Ok
 									</Button>
@@ -721,7 +755,7 @@ const Bookmark = ({
 								<DialogActions>
 									<Button
 										onClick={() => {
-											handleClose(), saveImageToMongoDb(), refresh();
+											handleClose(), refresh();
 										}}>
 										Ok
 									</Button>
@@ -740,6 +774,7 @@ const Bookmark = ({
 					width: "20vw",
 					// backgroundColor: "black",
 					position: "relative",
+					left: "10%",
 				}}
 				id="sectionproduct"></section>
 		</>

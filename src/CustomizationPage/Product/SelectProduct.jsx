@@ -3,7 +3,7 @@ import style from "./SelectProduct.module.css";
 function SelectProduct({ onProductSelect }) {
 	return (
 		<div className={style.selectproduct}>
-			<h2>Select Product</h2>
+			<h2 style={{ fontSize: "2.5rem" }}>Select Product</h2>
 			<button className={style.btn} onClick={() => onProductSelect("keychain")}>
 				Keychain
 			</button>

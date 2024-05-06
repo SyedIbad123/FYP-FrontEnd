@@ -17,12 +17,12 @@
 	left: 40%;
 }
 .frame {
-	height: 38vh;
+	height: 26vh;
 	width: 5.2vw;
 	/* background-color: black; */
 	border: 2px dashed red;
 	position: absolute;
-	top: 30%;
+	top: 34%;
 	left: 48%;
 	overflow: hidden;
 }

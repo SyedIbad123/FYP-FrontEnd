@@ -26,8 +26,8 @@ const ProductProvider = ({ children }) => {
 		}
 	}, []);
 
-	console.log("custome product in ontext : ", customProductData);
-	console.log("cart product in ontext : ", cartProducts);
+	// console.log("custome product in ontext : ", customProductData);
+	// console.log("cart product in ontext : ", cartProducts);
 
 	return (
 		<ProductContext.Provider value={{ cartProducts, addToCart }}>

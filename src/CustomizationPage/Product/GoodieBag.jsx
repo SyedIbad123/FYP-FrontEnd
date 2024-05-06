@@ -367,48 +367,50 @@ const GoodieBag = ({
 	// 	setSelectedProduct(product);
 	// };
 
-	async function saveImageToMongoDb(imageLink) {
-		let url = "http://localhost:8000/api/v2/image/upload-image";
-		let data = {
-			image: imageLink,
-		};
-		axios
-			.post(url, { image: imageLink })
-			.then((response) => {
-				console.log("Response:", response.data);
-				// Handle response
-			})
-			.catch((error) => {
-				console.error("Error:", error);
-				// Handle error
-			});
-	}
+	let url = "http://localhost:8000/api/v2/image";
 
-	const handleSave = async () => {
+	// const handleSave = async () => {
+	// 	// const node = frameRef.current;
+
+	// 	try {
+	// 		// const canvas = await html2canvas(node);
+	// 		// const imageLink = canvas.toDataURL("image/png");
+
+	// 		// Choose ONE of the following actions (A, B, or C):
+
+	// 		// A. Store to Database ('db.json')
+	// 		// await saveImageLinkToJson("db.json", imageLink, "customized_image.png");
+	// 		// console.log("image link : ", imageLink);
+
+	// 		// saveImageToMongoDb(imageLink); // this function saves image in db
+	// 		// B. Display the Image
+	// 		// displayImage(imageLink);
+
+	// 		// C. Other Actions (e.g., upload to an image hosting service)
+	// 		// ... Your code to handle the imageLink
+
+	// 		console.log("Image generated and processed successfully!");
+	// 	} catch (error) {
+	// 		console.error("Error generating or handling image:", error);
+	// 	}
+	// };
+
+	async function saveImageToMongoDb() {
 		const node = frameRef.current;
 
 		try {
 			const canvas = await html2canvas(node);
 			const imageLink = canvas.toDataURL("image/png");
-
-			// Choose ONE of the following actions (A, B, or C):
-
-			// A. Store to Database ('db.json')
-			// await saveImageLinkToJson("db.json", imageLink, "customized_image.png");
-			console.log("image link : ", imageLink);
-
-			// saveImageToMongoDb(imageLink); // this function saves image in db
-			// B. Display the Image
 			displayImage(imageLink);
-
-			// C. Other Actions (e.g., upload to an image hosting service)
-			// ... Your code to handle the imageLink
-
-			console.log("Image generated and processed successfully!");
-		} catch (error) {
-			console.error("Error generating or handling image:", error);
+			await axios.post(`${url}/upload-image`, {
+				imageUrl: imageLink,
+			});
+		} catch (e) {
+			console.log(e);
 		}
-	};
+
+		console.log("Image saved to MongoDB successfully!");
+	}
 
 	// async function saveImageLinkToJson(filename, dataUrl, imageName) {
 	// 	try {
@@ -627,7 +629,7 @@ const GoodieBag = ({
 								<DialogActions>
 									<Button
 										onClick={() => {
-											handleClose(), handleSave();
+											handleClose(), saveImageToMongoDb();
 										}}>
 										Ok
 									</Button>
@@ -685,7 +687,7 @@ const GoodieBag = ({
 								<DialogActions>
 									<Button
 										onClick={() => {
-											handleClose(), saveImageToMongoDb(), refresh();
+											handleClose(), refresh();
 										}}>
 										Ok
 									</Button>

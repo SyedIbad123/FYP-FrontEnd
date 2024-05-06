@@ -7,13 +7,15 @@ import StylesPage from "./Product/StylesPage/StylePage";
 const CustomizePage = () => {
 	return (
 		<>
-			<Header />
+			{/* <Header />
 
 			<Routes>
 				{/* <Route path="/" index element={<Designing />} /> */}
-				<Route path="/design" element={<Designing />} />
+			{/* <Route path="/design" element={<Designing />} />
 				<Route path="/styles" element={<StylesPage />} />
-			</Routes>
+			</Routes> */}{" "}
+			{/* */}
+			<Designing />
 		</>
 	);
 };

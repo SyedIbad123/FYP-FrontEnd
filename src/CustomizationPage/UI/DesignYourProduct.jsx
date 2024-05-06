@@ -31,10 +31,10 @@ const DesignYourProduct = ({ onImageSelect, onAddText, setSelectedImage }) => {
 	};
 
 	return (
-		<section style={{ marginTop: "6rem" }}>
+		<section style={{ marginTop: "2rem" }}>
 			<div>
-				<h3>Design your product</h3>
-				<p>Max file size of 50MB</p>
+				<h3 className={style.heading}>Design your product</h3>
+				<p className={style.para}>Max file size of 50MB</p>
 			</div>
 			<div>
 				<button onClick={handleImageOpen} className={style.addImg}>
