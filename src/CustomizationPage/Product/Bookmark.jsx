@@ -495,7 +495,7 @@ const Bookmark = ({
 
 		const imgElement = document.createElement("img");
 
-		imgElement.style.width = "30vw";
+		imgElement.style.width = "30vw"; 
 		imgElement.style.height = "70vh";
 		console.log("img Element ===> ", imgElement);
 
