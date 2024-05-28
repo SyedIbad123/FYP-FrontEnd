@@ -6,6 +6,7 @@
 	color: rgb(3, 3, 3);
 	width: 51vw;
 	height: 130vh;
+	/* overflow-x: hidden; */
 }
 
 .image {
@@ -72,7 +73,7 @@
 
 .previewBtn {
 	position: absolute;
-	top: 100%;
+	top: 110%;
 	left: 34%;
 	background-color: rgb(255, 255, 255);
 	color: rgb(3, 3, 3);
@@ -92,7 +93,7 @@
 
 .designBtn {
 	position: absolute;
-	top: 100%;
+	top: 110%;
 	left: 60%;
 	background-color: rgb(255, 255, 255);
 	color: rgb(3, 3, 3);

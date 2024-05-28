@@ -10,7 +10,8 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
-// import * as domtoimage from "dom-to-image";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Keychain = ({
 	selectedColor = "white",
@@ -19,10 +20,13 @@ const Keychain = ({
 	imageUpdateTrigger,
 	textUpdateTrigger,
 }) => {
-	const canvasRef = useRef(null);
+	const frontCanvasRef = useRef(null);
+	const backCanvasRef = useRef(null);
 	const frameRef = useRef(null);
 
-	const [canvas, setCanvas] = useState(null);
+	const [frontCanvas, setFrontCanvas] = useState(null);
+	const [backCanvas, setBackCanvas] = useState(null);
+
 	const [selectedTextObject, setSelectedTextObject] = useState(false);
 	const [displayColorPicker, setDisplayColorPicker] = useState(false);
 	const [color, setColor] = useState("#000000");
@@ -30,10 +34,13 @@ const Keychain = ({
 	const [showFontDropdown, setShowFontDropdown] = useState(false);
 	const [isTextSelected, setIsTextSelected] = useState(false);
 	const [editMode, setEditMode] = useState(true);
-	const [imageLoaded, setImageLoaded] = useState(false);
-	const [selectedProduct, setSelectedProduct] = useState(null);
-
-	console.log("keychain component");
+	const [selectedSide, setSelectedSide] = useState("Front");
+	const [preview, setPreview] = useState(false);
+	const [vendors, setVendors] = useState([]);
+	const [selectedVendor, setSelectedVendor] = useState("");
+	const [image, setImage] = useState([]);
+	const [showImage, setShowImage] = useState(false);
+	const [open, setOpen] = useState(false);
 
 	const fontFamilies = [
 		"Arial",
@@ -97,20 +104,25 @@ const Keychain = ({
 		}
 	};
 
-	console.log("selectedColor", selectedColor);
-
 	const imgSrc = getImageSource(selectedColor);
-	// console.log("imgSrc", imgSrc);
 
 	useEffect(() => {
-		const newCanvas = new fabric.Canvas(canvasRef.current);
-		setCanvas(newCanvas);
+		const newFrontCanvas = new fabric.Canvas(frontCanvasRef.current);
+		const newBackCanvas = new fabric.Canvas(backCanvasRef.current);
+
+		setFrontCanvas(newFrontCanvas);
+		setBackCanvas(newBackCanvas);
 
 		const handleResize = () => {
-			if (canvas) {
-				canvas.setWidth(frameRef.current.clientWidth);
-				canvas.setHeight(frameRef.current.clientHeight);
-				canvas.renderAll();
+			if (frontCanvas) {
+				frontCanvas.setWidth(frameRef.current.clientWidth);
+				frontCanvas.setHeight(frameRef.current.clientHeight);
+				frontCanvas.renderAll();
+			}
+			if (backCanvas) {
+				backCanvas.setWidth(frameRef.current.clientWidth);
+				backCanvas.setHeight(frameRef.current.clientHeight);
+				backCanvas.renderAll();
 			}
 		};
 
@@ -168,29 +180,27 @@ const Keychain = ({
 			canvas.requestRenderAll();
 		}
 
-		newCanvas.on("selection:updated", (e) => setSelectedTextObject(e.target));
-		newCanvas.on("selection:cleared", (e) => setSelectedTextObject(false));
-
-		// Example: Assume your image has an 'onload' event listener
-		// const imgElement = frameRef.current.querySelector("img");
-		// if (imgElement) {
-		// 	imgElement.onload = () => setImageLoaded(true);
-		// }
+		newFrontCanvas.on("selection:updated", (e) =>
+			setSelectedTextObject(e.target)
+		);
+		newFrontCanvas.on("selection:cleared", (e) => setSelectedTextObject(false));
+		newBackCanvas.on("selection:updated", (e) =>
+			setSelectedTextObject(e.target)
+		);
+		newBackCanvas.on("selection:cleared", (e) => setSelectedTextObject(false));
 
 		return () => {
-			if (canvas) {
-				canvas.dispose(); // Dispose of all objects and the canvas itself
-			}
+			window.removeEventListener("resize", handleResize);
+			newFrontCanvas.dispose();
+			newBackCanvas.dispose();
 		};
-	}, [frameRef]); // Empty dependency array: runs only on mount, unmount
+	}, [frameRef, selectedSide]);
 
 	useEffect(() => {
-		const addImagesToCanvas = () => {
-			// console.log("selectedImage", selectedImage);
-			if (!canvas || !selectedImage) return;
+		const addImagesToCanvas = (canvas, image) => {
+			if (!canvas || !image) return;
 
-			fabric.Image.fromURL(selectedImage, (img) => {
-				// img.controls = canvas.customControls;
+			fabric.Image.fromURL(image, (img) => {
 				img.scaleToWidth(100); // Smaller default size
 				img.scaleToHeight(100);
 				img.set({
@@ -202,17 +212,19 @@ const Keychain = ({
 					cornerColor: "black",
 				});
 				canvas.add(img);
-				// canvas.setActiveObject(img);
 				canvas.renderAll();
 			});
 		};
 
-		addImagesToCanvas();
-		console.log("selectedImage inside useEffect:");
+		if (selectedSide === "Front") {
+			addImagesToCanvas(frontCanvas, selectedImage);
+		} else {
+			addImagesToCanvas(backCanvas, selectedImage);
+		}
 	}, [selectedImage, imageUpdateTrigger]);
 
 	useEffect(() => {
-		const addTextToCanvas = () => {
+		const addTextToCanvas = (canvas) => {
 			if (!canvas || textAdded) return;
 
 			const textObject = new fabric.Textbox("Enter Text: ", {
@@ -224,23 +236,28 @@ const Keychain = ({
 				width: 100,
 				borderColor: "black",
 				cornerColor: "black",
-
 				fill: "#000000",
-				// controls: canvas.deleteControl,
 			});
 			canvas.add(textObject);
-			// canvas.setActiveObject(textObject);
 			canvas.renderAll();
 		};
 
-		addTextToCanvas();
-		console.log("textAdded inside useEffect:");
+		console.log("selected side", selectedSide);
+
+		if (selectedSide === "Front") {
+			addTextToCanvas(frontCanvas);
+		}
+		if (selectedSide === "Back") {
+			addTextToCanvas(backCanvas);
+		}
 	}, [textAdded, textUpdateTrigger]);
 
 	useEffect(() => {
-		if (!canvas) return;
+		if (!frontCanvas || !backCanvas) return;
 
-		canvas.on("mouse:down", (options) => {
+		const currentCanvas = selectedSide === "Front" ? frontCanvas : backCanvas;
+
+		currentCanvas.on("mouse:down", (options) => {
 			if (options.target && options.target.type === "textbox") {
 				setSelectedTextObject(options.target);
 				setIsTextSelected(true); // Update text selection status
@@ -250,10 +267,10 @@ const Keychain = ({
 			}
 		});
 
-		canvas.on("selection:cleared", (e) => setIsTextSelected(false));
-	}, [canvas, editMode]);
+		currentCanvas.on("selection:cleared", () => setIsTextSelected(false));
+	}, [frontCanvas, backCanvas, selectedSide, editMode]);
 
-	const handleBoldClick = () => {
+	const handleBoldClick = (canvas) => {
 		if (selectedTextObject) {
 			selectedTextObject.set({
 				fontWeight:
@@ -263,7 +280,7 @@ const Keychain = ({
 		}
 	};
 
-	const handleItalicClick = () => {
+	const handleItalicClick = (canvas) => {
 		if (selectedTextObject) {
 			selectedTextObject.set({
 				fontStyle:
@@ -273,7 +290,7 @@ const Keychain = ({
 		}
 	};
 
-	const handleUnderlineClick = () => {
+	const handleUnderlineClick = (canvas) => {
 		if (selectedTextObject) {
 			selectedTextObject.set({
 				underline: !selectedTextObject.underline, // Toggle underline
@@ -282,53 +299,66 @@ const Keychain = ({
 		}
 	};
 
-	const handleColorClick = () => {
+	const handleColorClick = (canvas) => {
 		setDisplayColorPicker(!displayColorPicker);
 	};
 
-	const handleColorChange = (newColor) => {
+	const handleColorChange = (newColor, canvas) => {
 		setColor(newColor.hex);
-	};
-
-	const closeColorPicker = () => {
 		if (selectedTextObject) {
-			selectedTextObject.set({ fill: color });
+			selectedTextObject.set({ fill: newColor.hex });
 			canvas.renderAll();
 		}
-		setDisplayColorPicker(false);
 	};
 
-	const handleFontFamilyClick = () => {
+	const closeColorPicker = (canvas) => {
+		setDisplayColorPicker(false);
+		canvas.renderAll();
+	};
+
+	const handleFontFamilyClick = (canvas) => {
 		setShowFontDropdown(!showFontDropdown);
 	};
 
-	const handleFontChange = (newFont) => {
+	const handleFontChange = (newFont, canvas) => {
 		setSelectedFont(newFont);
-	};
-
-	const applyFont = () => {
 		if (selectedTextObject) {
-			selectedTextObject.set({ fontFamily: selectedFont });
+			selectedTextObject.set({ fontFamily: newFont });
 			canvas.renderAll();
 		}
-		setShowFontDropdown(false); // Close the dropdown
 	};
 
-	const [preview, setPreview] = useState(false);
+	const applyFont = (canvas) => {
+		setShowFontDropdown(false); // Close the dropdown
+		canvas.renderAll();
+	};
 
 	const handlePreviewClick = () => {
 		setEditMode(false);
 		setPreview(true);
 
 		// Disable interaction with ALL objects
-		canvas.forEachObject((obj) => {
-			obj.selectable = false;
-			obj.evented = false;
-			obj.hasControls = false;
-			obj.hasBorders = false;
-			obj.deleteControl = false;
-		});
-		canvas.renderAll();
+		if (frontCanvas) {
+			frontCanvas.forEachObject((obj) => {
+				obj.selectable = false;
+				obj.evented = false;
+				obj.hasControls = false;
+				obj.hasBorders = false;
+				obj.deleteControl = false;
+			});
+			frontCanvas.renderAll();
+		}
+
+		if (backCanvas) {
+			backCanvas.forEachObject((obj) => {
+				obj.selectable = false;
+				obj.evented = false;
+				obj.hasControls = false;
+				obj.hasBorders = false;
+				obj.deleteControl = false;
+			});
+			backCanvas.renderAll();
+		}
 	};
 
 	const handleDesignClick = () => {
@@ -336,57 +366,49 @@ const Keychain = ({
 		setPreview(false);
 
 		// Enable interaction with ALL objects
-		canvas.forEachObject((obj) => {
-			obj.selectable = true;
-			obj.evented = true;
-			obj.hasControls = true;
-			obj.hasBorders = true;
-			obj.deleteControl = true;
-		});
-		canvas.renderAll();
+		if (frontCanvas) {
+			frontCanvas.forEachObject((obj) => {
+				obj.selectable = true;
+				obj.evented = true;
+				obj.hasControls = true;
+				obj.hasBorders = true;
+				obj.deleteControl = true;
+			});
+			frontCanvas.renderAll();
+		}
+
+		if (backCanvas) {
+			backCanvas.forEachObject((obj) => {
+				obj.selectable = true;
+				obj.evented = true;
+				obj.hasControls = true;
+				obj.hasBorders = true;
+				obj.deleteControl = true;
+			});
+			backCanvas.renderAll();
+		}
 	};
 
-	// const downloadImage = () => {
-	// 	const link = document.createElement("a");
-	// 	link.download = "image.png";
-	// 	link.href = canvas.toDataURL({
-	// 		format: "png",
-	// 		quality: 1,
-	// 	});
-	// 	link.click();
-	// };
+	const vendorURL = "http://localhost:8000/api/v2/shop/admin-all-sellers";
 
-	// const handleProductSelect = (product) => {
-	// 	setSelectedProduct(product);
-	// };
+	const getVendors = async () => {
+		try {
+			let response = await axios.get(vendorURL, {
+				withCredentials: true, // Include credentials (cookies) in the request
+			});
+			setVendors(response.data.sellers);
+			console.log("Vendors: ", response.data);
+		} catch (error) {
+			console.error("Error fetching vendors:", error);
+		}
+	};
+	console.log("vendors", vendors);
+
+	useEffect(() => {
+		getVendors();
+	}, []);
 
 	let url = "http://localhost:8000/api/v2/image";
-
-	// const handleSave = async () => {
-	// 	// const node = frameRef.current;
-
-	// 	try {
-	// 		// const canvas = await html2canvas(node);
-	// 		// const imageLink = canvas.toDataURL("image/png");
-
-	// 		// Choose ONE of the following actions (A, B, or C):
-
-	// 		// A. Store to Database ('db.json')
-	// 		// await saveImageLinkToJson("db.json", imageLink, "customized_image.png");
-	// 		// console.log("image link : ", imageLink);
-
-	// 		// saveImageToMongoDb(imageLink); // this function saves image in db
-	// 		// B. Display the Image
-	// 		// displayImage(imageLink);
-
-	// 		// C. Other Actions (e.g., upload to an image hosting service)
-	// 		// ... Your code to handle the imageLink
-
-	// 		console.log("Image generated and processed successfully!");
-	// 	} catch (error) {
-	// 		console.error("Error generating or handling image:", error);
-	// 	}
-	// };
 
 	async function saveImageToMongoDb() {
 		const node = frameRef.current;
@@ -397,54 +419,41 @@ const Keychain = ({
 			displayImage(imageLink);
 			await axios.post(`${url}/upload-image`, {
 				imageUrl: imageLink,
+				vendor: selectedVendor,
 			});
+			console.log("Image saved to MongoDB successfully!");
 		} catch (e) {
-			console.log(e);
+			console.log("Error uploading image", e);
 		}
-
-		console.log("Image saved to MongoDB successfully!");
 	}
 
-	// async function saveImageLinkToJson(filename, dataUrl, imageName) {
-	// 	try {
-	// 		const existingData = await fetch(filename).then((response) => {
-	// 			if (!response.ok) {
-	// 				throw new Error(`Error fetching ${filename}: ${response.statusText}`);
-	// 			}
-	// 			return response.json();
-	// 		});
-	// 		console.log("Existing Data before push : ", existingData);
+	const getImage = async () => {
+		try {
+			const response = await axios.get(`${url}/get-all-images`);
+			setImage(response?.data?.images);
+			console.log("Image fetched from MongoDB successfully!");
+			console.log("Images: ", response.data.images);
+			console.log("image == > ", image);
+			// image.map((img) => {
+			// 	console.log("Image URL map : ", img.imageUrl);
+			// });
+			console.log("Image URL: ", response.data.images[0].imageUrl);
+		} catch (error) {
+			console.error("Error fetching image from MongoDB:", error);
+		}
+	};
 
-	// 		const newImageEntry = { link: dataUrl, filename: imageName };
-	// 		existingData.images.push(newImageEntry);
+	console.log("image == > ", image);
 
-	// 		console.log("Existing Data after push : ", existingData);
-	// 		console.log("New image entry : ", newImageEntry);
-	// 		console.log("Stringify existing data : ", JSON.stringify(existingData));
-
-	// 		await axios
-	// 			.put(`/images`, existingData) // Update with your server URL
-	// 			.then((response) => {
-	// 				if (response.status === 200) {
-	// 					console.log("Image link saved to db.json successfully!");
-	// 				} else {
-	// 					console.error("Error saving to db.json:", response.statusText);
-	// 				}
-	// 				console.log("Response data : ", response.data);
-	// 				return response.data;
-	// 			});
-	// 	} catch (error) {
-	// 		console.error("Error interacting with db.json:", error);
-	// 	}
-	// }
-
-	const [showImage, setShowImage] = useState(false);
+	useEffect(() => {
+		getImage();
+	}, []);
 
 	function displayImage(imageLink) {
 		setShowImage(true);
 		setPreview(false);
 		const sectionElement = document.getElementById("sectionproduct");
-		console.log("section Element ===> ", sectionElement);
+		// console.log("section Element ===> ", sectionElement);
 		const imgElement = document.createElement("img");
 		imgElement.style.width = "30vw";
 		imgElement.style.height = "70vh";
@@ -453,8 +462,6 @@ const Keychain = ({
 		imgElement.alt = "Generated Image";
 		sectionElement.appendChild(imgElement);
 	}
-
-	const [open, setOpen] = useState(false);
 
 	const handleClickOpen = () => {
 		setOpen(true);
@@ -469,26 +476,42 @@ const Keychain = ({
 		console.log("refresh called");
 	}
 
+	const handleSideChange = (side) => {
+		setSelectedSide(side);
+		console.log("side changed");
+		toast(`${side} selected`, {
+			autoClose: 1000,
+			progressStyle: {
+				background: side === "Front" ? "blue" : "red",
+			},
+		});
+	};
+	console.log("Selected side change to ====> ", selectedSide);
+
 	return (
 		<>
 			<section className={styles.section}>
 				<section>
 					<div ref={frameRef}>
-						{/* <canvas ref={canvasRef2}> */}
-						<img className={styles.image} src={imgSrc} alt="bag" />
+						<img className={styles.image} src={imgSrc} alt="keychain" />
 						<div className={`${styles.frame} ${!editMode && styles.noBorder}`}>
-							<canvas
-								id="canvas"
-								ref={canvasRef}
-								className={styles.canvas1}></canvas>
+							{selectedSide === "Front" ? (
+								<canvas ref={frontCanvasRef} id="canvas-front"></canvas>
+							) : (
+								<canvas ref={backCanvasRef} id="canvas-back"></canvas>
+							)}
 						</div>
-						{/* </canvas> */}
 					</div>
 				</section>
 
 				{isTextSelected && editMode && (
 					<section className={styles.btnSect}>
-						<button onClick={handleFontFamilyClick}>
+						<button
+							onClick={() =>
+								handleFontFamilyClick(
+									selectedSide === "Front" ? frontCanvas : backCanvas
+								)
+							}>
 							<img
 								style={{ width: "25px", height: "25px" }}
 								src="https://cdn-icons-png.flaticon.com/512/167/167502.png"
@@ -503,7 +526,12 @@ const Keychain = ({
 										borderRadius: "20px",
 									}}
 									value={selectedFont}
-									onChange={(e) => handleFontChange(e.target.value)}>
+									onChange={(e) =>
+										handleFontChange(
+											e.target.value,
+											selectedSide === "Front" ? frontCanvas : backCanvas
+										)
+									}>
 									{fontFamilies.map((font) => (
 										<option key={font} value={font}>
 											{font}
@@ -519,7 +547,12 @@ const Keychain = ({
 								</button>
 							</div>
 						)}
-						<button onClick={handleColorClick}>
+						<button
+							onClick={() =>
+								handleColorClick(
+									selectedSide === "Front" ? frontCanvas : backCanvas
+								)
+							}>
 							<img
 								style={{ width: "25px", height: "25px" }}
 								src="https://cdn-icons-png.flaticon.com/512/11460/11460836.png"
@@ -535,24 +568,46 @@ const Keychain = ({
 									zIndex: 99,
 								}}>
 								<SketchPicker color={color} onChange={handleColorChange} />
-								<button onClick={closeColorPicker}>Apply</button>
+								<button
+									onClick={() =>
+										closeColorPicker(
+											selectedSide === "Front" ? frontCanvas : backCanvas
+										)
+									}>
+									Apply
+								</button>
 							</div>
 						) : null}
-						<button onClick={handleBoldClick}>
+						<button
+							onClick={() =>
+								handleBoldClick(
+									selectedSide === "Front" ? frontCanvas : backCanvas
+								)
+							}>
 							<img
 								style={{ width: "25px", height: "25px" }}
 								src="https://cdn-icons-png.flaticon.com/512/114/114304.png"
 								alt=""
 							/>
 						</button>
-						<button onClick={handleItalicClick}>
+						<button
+							onClick={() =>
+								handleItalicClick(
+									selectedSide === "Front" ? frontCanvas : backCanvas
+								)
+							}>
 							<img
 								style={{ width: "25px", height: "25px" }}
 								src="https://cdn-icons-png.flaticon.com/512/14253/14253712.png"
 								alt=""
 							/>
 						</button>
-						<button onClick={handleUnderlineClick}>
+						<button
+							onClick={() =>
+								handleUnderlineClick(
+									selectedSide === "Front" ? frontCanvas : backCanvas
+								)
+							}>
 							<img
 								style={{ width: "25px", height: "25px" }}
 								src="https://cdn-icons-png.flaticon.com/512/25/25433.png"
@@ -562,23 +617,72 @@ const Keychain = ({
 					</section>
 				)}
 
-				<section
-					style={
-						{
-							// marginTop: "3rem",
-							// top: "10%",
-							// position: "absolute",
-							// top: "80%",
-							// left: "50%",
-						}
-					}>
-					<button
-						// style={{
-						// 	marginTop: "3rem",
-						// 	top: "10%",
-						// }}
-						className={styles.previewBtn}
-						onClick={handlePreviewClick}>
+				<section>
+					<div>
+						<button
+							style={{
+								borderRadius: "50px",
+								padding: "0.5rem 1rem 0.5rem 1rem",
+								margin: "1rem 2rem",
+								backgroundColor: "black",
+								color: "white",
+								border: "none",
+								outline: "none",
+								cursor: "pointer",
+							}}
+							onClick={() => handleSideChange("Front")}>
+							Front
+						</button>
+						<button
+							style={{
+								borderRadius: "50px",
+								padding: "0.5rem 1rem 0.5rem 1rem",
+								margin: "1rem 2rem",
+								backgroundColor: "black",
+								color: "white",
+								border: "none",
+								outline: "none",
+								cursor: "pointer",
+							}}
+							onClick={() => handleSideChange("Back")}>
+							Back
+						</button>
+						<ToastContainer />
+						<br></br>
+						<br></br>
+						{/* <button onClick={() => getVendors()}>Vendors</button> */}
+						<select
+							style={{
+								padding: "0.2rem",
+								borderRadius: "20px",
+								marginTop: "-5rem",
+								// top: "100%",
+								left: "70%",
+								position: "absolute",
+								// backgroundColor: "lightblue",
+								border: "none",
+								outline: "none",
+							}}
+							name="vendor"
+							id="vendor"
+							onChange={(e) => setSelectedVendor(e.target.value)}>
+							<option value="">Select a vendor</option>
+							{vendors.map((vendor) => (
+								<option
+									style={{
+										backgroundColor: "lightgrey",
+										color: "black",
+										border: "none",
+										outline: "none",
+									}}
+									key={vendor.name}
+									value={vendor.name}>
+									{vendor.name}
+								</option>
+							))}
+						</select>
+					</div>
+					<button className={styles.previewBtn} onClick={handlePreviewClick}>
 						Preview
 					</button>
 					<button className={styles.designBtn} onClick={handleDesignClick}>
@@ -590,7 +694,7 @@ const Keychain = ({
 							<Button
 								sx={{
 									position: "absolute",
-									top: "110%",
+									top: "120%",
 									left: "38%",
 									backgroundColor: "rgb(2, 2, 2)",
 									color: "rgb(190, 190, 190)",
@@ -626,91 +730,70 @@ const Keychain = ({
 								</DialogTitle>
 								<DialogContent>
 									<DialogContentText id="alert-dialog-description">
-										Are you want to sure to continue ?
+										Are you sure you want to continue?
 									</DialogContentText>
 								</DialogContent>
 								<DialogActions>
 									<Button
 										onClick={() => {
-											handleClose(), saveImageToMongoDb();
+											handleClose();
+											saveImageToMongoDb();
 										}}>
 										Ok
 									</Button>
 									<Button onClick={handleClose} autoFocus>
-										cancel
-									</Button>
-								</DialogActions>
-							</Dialog>
-						</>
-					)}
-					{showImage && (
-						<>
-							<Button
-								sx={{
-									position: "absolute",
-									top: "110%",
-									left: "38%",
-									backgroundColor: "rgb(2, 2, 2)",
-									color: "rgb(190, 190, 190)",
-									border: "none",
-									outline: "none",
-									borderRadius: "50px",
-									padding: "0.5rem 5rem",
-									cursor: "pointer",
-									transition:
-										"transform 0.3s ease-in-out, background-color 0.4s ease-in-out, color 0.3s ease-in-out",
-									"&:hover": {
-										transform: "scale(1.1)",
-										backgroundColor: "rgb(250, 4, 4)",
-										color: "rgb(250, 250, 250)",
-										border: "none",
-									},
-									"&:hover span": {
-										transition: "font-size 0.3s ease-in-out",
-										fontSize: "1.1em",
-									},
-								}}
-								variant="outlined"
-								onClick={handleClickOpen}>
-								Confirm
-							</Button>
-							<Dialog
-								open={open}
-								onClose={handleClose}
-								aria-labelledby="alert-dialog-title"
-								aria-describedby="alert-dialog-description">
-								<DialogTitle id="alert-dialog-title">
-									{"Confirm your design"}
-								</DialogTitle>
-								<DialogContent>
-									<DialogContentText id="alert-dialog-description">
-										Are you want to sure to continue ?
-									</DialogContentText>
-								</DialogContent>
-								<DialogActions>
-									<Button
-										onClick={() => {
-											handleClose(), refresh();
-										}}>
-										Ok
-									</Button>
-									<Button onClick={handleClose} autoFocus>
-										cancel
+										Cancel
 									</Button>
 								</DialogActions>
 							</Dialog>
 						</>
 					)}
 				</section>
+
+				<section
+					style={{
+						height: "100vh",
+						width: "190%",
+						backgroundColor: "lightgrey",
+						top: "130%",
+						left: "-90%",
+						color: "white",
+						position: "absolute",
+					}}>
+					<h3
+						style={{
+							left: "20%",
+							position: "relative",
+							color: "black",
+							top: "5%",
+							display: "inline",
+						}}>
+						Front Image
+					</h3>
+					<h3
+						style={{
+							left: "65%",
+							position: "relative",
+							color: "black",
+							top: "5%",
+							display: "inline",
+						}}>
+						Back Image
+					</h3>
+					<section
+						style={{
+							height: "10vh",
+							width: "20vw",
+							position: "relative",
+							left: "10%",
+							top: "10%",
+							display: "flex",
+							flexDirection: "row",
+							gap: "250px",
+						}}
+						id="sectionproduct"></section>
+				</section>
 			</section>
-			<section
-				style={{
-					height: "10vh",
-					width: "20vw",
-					// backgroundColor: "black",
-					position: "relative",
-				}}
-				id="sectionproduct"></section>
 		</>
 	);
 };

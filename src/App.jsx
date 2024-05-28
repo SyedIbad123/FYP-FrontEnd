@@ -1,14 +1,16 @@
 import CustomizePage from "./CustomizationPage/CustomizePage";
-import { BrowserRouter } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { ProductProvider } from "./CustomizationPage/Product/ProductContext/ProductContext";
 
 function App() {
 	return (
-		<BrowserRouter>
+		<Router>
 			<ProductProvider>
-				<CustomizePage />
+				<Routes>
+					<Route path="/" element={<CustomizePage />} />
+				</Routes>
 			</ProductProvider>
-		</BrowserRouter>
+		</Router>
 	);
 }
 
