@@ -94,7 +94,7 @@ const Designing = ({ props }) => {
 						margin: "50px 0",
 						width: "110%",
 					}}
-				/> 
+				/>
 				<hr
 					style={{
 						position: "absolute",

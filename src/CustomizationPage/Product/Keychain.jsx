@@ -114,15 +114,15 @@ const Keychain = ({
 		setBackCanvas(newBackCanvas);
 
 		const handleResize = () => {
-			if (frontCanvas) {
-				frontCanvas.setWidth(frameRef.current.clientWidth);
-				frontCanvas.setHeight(frameRef.current.clientHeight);
-				frontCanvas.renderAll();
+			if (newFrontCanvas) {
+				newFrontCanvas.setWidth(frameRef.current.clientWidth);
+				newFrontCanvas.setHeight(frameRef.current.clientHeight);
+				newFrontCanvas.renderAll();
 			}
-			if (backCanvas) {
-				backCanvas.setWidth(frameRef.current.clientWidth);
-				backCanvas.setHeight(frameRef.current.clientHeight);
-				backCanvas.renderAll();
+			if (newBackCanvas) {
+				newBackCanvas.setWidth(frameRef.current.clientWidth);
+				newBackCanvas.setHeight(frameRef.current.clientHeight);
+				newBackCanvas.renderAll();
 			}
 		};
 
@@ -188,6 +188,8 @@ const Keychain = ({
 			setSelectedTextObject(e.target)
 		);
 		newBackCanvas.on("selection:cleared", (e) => setSelectedTextObject(false));
+
+		handleResize();
 
 		return () => {
 			window.removeEventListener("resize", handleResize);
@@ -501,7 +503,7 @@ const Keychain = ({
 								<canvas ref={backCanvasRef} id="canvas-back"></canvas>
 							)}
 						</div>
-					</div>
+					</div> 
 				</section>
 
 				{isTextSelected && editMode && (

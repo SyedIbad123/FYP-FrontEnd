@@ -97,23 +97,23 @@ const Bookmark = ({
 		}
 
 		// white tassel
-		// else if (color === "whitewhite") {
-		// 	return "src\\CustomizationPage\\Product\\images\\BookMarks\\WhiteTasselWhiteBookmark.png";
-		// } else if (color === "whitebrown") {
-		// 	return "src\\CustomizationPage\\Product\\images\\BookMarks\\WhiteTasselBrownBookmark.png";
-		// } else if (color === "whitered") {
-		// 	return "src\\CustomizationPage\\Product\\images\\BookMarks\\WhiteTasselRedBookmark.png";
-		// } else if (color === "whitegreen") {
-		// 	return "src\\CustomizationPage\\Product\\images\\BookMarks\\WhiteTasselGreenBookmark.png";
-		// } else if (color === "whitepurple") {
-		// 	return "src\\CustomizationPage\\Product\\images\\BookMarks\\WhiteTasselPurpleBookmark.png";
-		// } else if (color === "whitepink") {
-		// 	return "src\\CustomizationPage\\Product\\images\\BookMarks\\WhiteTasselPinkBookmark.png";
-		// } else if (color === "whiteyellow") {
-		// 	return "src\\CustomizationPage\\Product\\images\\BookMarks\\WhiteTasselYellowBookmark.png";
-		// } else {
-		// 	return "src\\CustomizationPage\\Product\\images\\BookMarks\\WhiteTasselWhiteBookmark.png";
-		// }
+		else if (color === "whitewhite") {
+			return "src\\CustomizationPage\\Product\\images\\BookMarks\\WhiteTasselWhiteBookmark.png";
+		} else if (color === "whitebrown") {
+			return "src\\CustomizationPage\\Product\\images\\BookMarks\\WhiteTasselBrownBookmark.png";
+		} else if (color === "whitered") {
+			return "src\\CustomizationPage\\Product\\images\\BookMarks\\WhiteTasselRedBookmark.png";
+		} else if (color === "whitegreen") {
+			return "src\\CustomizationPage\\Product\\images\\BookMarks\\WhiteTasselGreenBookmark.png";
+		} else if (color === "whitepurple") {
+			return "src\\CustomizationPage\\Product\\images\\BookMarks\\WhiteTasselPurpleBookmark.png";
+		} else if (color === "whitepink") {
+			return "src\\CustomizationPage\\Product\\images\\BookMarks\\WhiteTasselPinkBookmark.png";
+		} else if (color === "whiteyellow") {
+			return "src\\CustomizationPage\\Product\\images\\BookMarks\\WhiteTasselYellowBookmark.png";
+		} else {
+			return "src\\CustomizationPage\\Product\\images\\BookMarks\\WhiteTasselWhiteBookmark.png";
+		}
 	};
 
 	var imgSrc = getImageSource(selectedColor);
